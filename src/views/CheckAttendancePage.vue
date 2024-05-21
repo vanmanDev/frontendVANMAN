@@ -74,6 +74,8 @@
                             <option value="">All</option>
                             <option value="normal">Normal</option>
                             <option value="backdate">Backdate</option>
+                            <option value="holiday">Holiday</option>
+                            <option value="backdate(holiday)">Backdate(Holiday)</option>
                           </select>
                         </label>
                     </div>
@@ -109,6 +111,8 @@
                                         <td class="border-b-blue-900">
                                             <span v-if="liftts.type_sign == 'normal'" class="text-green-500 font-bold">Normal</span>
                                             <span v-else-if="liftts.type_sign == 'backdate'" class="text-red-500 font-bold">Backdate</span>
+                                            <span v-else-if="liftts.type_sign == 'holiday'" class="text-blue-500 font-bold">Holiday</span>
+                                            <span v-else-if="liftts.type_sign == 'backdate(holiday)'" class="text-red-700 font-bold">Backdate(Holiday)</span>
                                         </td>
                                         <td v-if="liftts.status == 0" class="border-b-blue-900 text-red-600 font-bold flex justify-center items-center">
                                             <div class="dropdown dropdown-top dropdown-end ">
@@ -237,9 +241,9 @@
         mounted(){
             this.getlistTimesheet()
             this.getConfigSalary()
-            this.get_datetimefromserver()
+            this.updateDateTime()
             setInterval(() => {
-                this.get_datetimefromserver();
+                this.updateDateTime()
                 this.getlistTimesheet()
                 this.getConfigSalary()
             }, 1000)
@@ -310,38 +314,48 @@
                 let totalWages = 0;
                 const dataForExcel = this.mergedFilteredList.map((attendance) => {
                     let status = '';
+                    let wages = 0; // Variable to store wages
+                
                     if (attendance.type_of_work === "Work From Home") {
                         if (attendance.status === 0) {
                             status = 'Rejected';
-                            totalWages += 0;
                         } else if (attendance.status === 1) {
                             status = 'Pending';
-                            totalWages += 0;
                         } else if (attendance.status === 2) {
                             status = 'Approved';
-                            totalWages += this.configsalary.WFH;
+                            wages = this.configsalary.WFH;
+                            totalWages += wages;
                         }
                     } else if (attendance.type_of_work === "Work at Office") {
                         if (attendance.status === 0) {
                             status = 'Rejected';
-                            totalWages += 0;
                         } else if (attendance.status === 1) {
                             status = 'Pending';
-                            totalWages += 0;
                         } else if (attendance.status === 2) {
                             status = 'Approved';
-                            totalWages += this.configsalary.WOF;
+                            wages = this.configsalary.WOF;
+                            totalWages += wages;
                         }
                     }
-                    return { ...attendance, status };
+                    return {
+                        date: attendance.date,
+                        time_in: attendance.time_in,
+                        time_out: attendance.time_out,
+                        description: attendance.description,
+                        type_of_work: attendance.type_of_work,
+                        who_signed: attendance.who_signed,
+                        type_sign: attendance.type_sign,
+                        status,
+                        wages 
+                    }; // Include wages in the returned object
                 });
-
+            
                 const totalObject = { Total_Wages: totalWages };
                 dataForExcel.push(totalObject);
-
+            
                 const ws = XLSX.utils.json_to_sheet(dataForExcel);
                 const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+                XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
                 XLSX.writeFile(wb, `list_of_attendance.xlsx`);
             },
             formatDateTime(datetime){
@@ -357,20 +371,16 @@
                     return moment(fullDateTime, 'YYYY-MM-DD HH:mm:ss').format('hh:mm A');
                 }
             },
-            get_datetimefromserver(){
-                axios.get('https://worldtimeapi.org/api/ip')
-                // https://worldtimeapi.org/api/ip
-                .then(res => {
-                    this.server_datetime = res.data.datetime
-                    const datetime = new Date(this.server_datetime);
-            
-                    // Get date in "YYYY-MM-DD" format
-                    this.server_date = datetime.toISOString().split('T')[0];
+            updateDateTime() {
+              const now = new Date();
+              const date = this.formatDate(now);
+              const time = this.format_time(now);
 
-                    // Get time in "HH:MM:SS" format
-                    this.server_time = datetime.toTimeString().split(' ')[0];
+              this.server_datetime = `${date} ${time}`;
 
-                })
+              this.server_date = now.toISOString().split('T')[0];
+
+              this.server_time = now.toTimeString().split(' ')[0];
             },
             patchstatus(id,status){
                 axios.patch(host + 'timesheets/' + id + '/',{
