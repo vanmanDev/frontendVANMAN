@@ -95,7 +95,7 @@
                                                         <div class="label">
                                                             <span class="label-text text-black">Leave DateTime Start</span>
                                                         </div>
-                                                        <input id="datetimein" type="datetime-local" value="" placeholder="Type here" class="input input-bordered w-full max-w-xl mb-4" v-model="datetime_start" required/>
+                                                        <input id="datetimein" type="datetime-local" placeholder="Type here" class="input input-bordered w-full max-w-xl mb-4" v-model="datetime_start" required/>
                                                     </label>
                                                     <label class="form-control w-full max-w-xs">
                                                         <div class="label">
@@ -291,6 +291,7 @@
                         confirmButtonText: 'OK'
                     })
                 } else {
+                if (this.datetime_start < this.datetime_end){
                     swal.fire({
                         title: 'Are you sure?',
                         text: 'You will update this leave request',
@@ -318,12 +319,15 @@
                                         confirmButtonText: 'OK'
                                     })
                                 } else {
-                                    axios.patch(`${host}leave_requests/${id}/`, {
+                                    axios.put(`${host}leave_requests/${id}/`, {
                                         datetime_start: this.datetime_start,
                                         datetime_end: this.datetime_end,
                                         description: this.description,
                                         tel: this.tel,
                                         type_of_leave: this.type_of_leave,
+                                        who_signed: this.user.first_name + ' ' + this.user.last_name,
+                                        status: 1,
+                                        user: this.user.id
                                     })
                                     .then((res) => {
                                         swal.fire({
@@ -336,59 +340,75 @@
                             }
                         }
                     })
+                } else {
+                    swal.fire({
+                        title: 'Error',
+                        text: 'DateTime Start must be less than DateTime End',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    })
                 }
+            }
             },
             post_leaverequest(){
                 try {
-                    swal.fire({
-                        title: 'Are you sure?',
-                        text: 'You will send this leave request',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes',
-                        cancelButtonText: 'No'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const today = moment(this.server_date)
-                            const start = moment(this.datetime_start)
-                            const end = moment(this.datetime_end)
-                            if (end.diff(today, 'days') < 15) {
-                                swal.fire({
-                                    title: 'Error',
-                                    text: 'DateTime must be greater than 15 days from today',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                })
-                            } else if (start.diff(today, 'days') < 15) {
-                                swal.fire({
-                                    title: 'Error',
-                                    text: 'DateTime must be greater than 15 days from today',
-                                    icon: 'error',
-                                    confirmButtonText: 'OK'
-                                })
-                            } else {
-                                axios.post(`${host}leave_requests/`, {
-                                    datetime_start: this.datetime_start,
-                                    datetime_end: this.datetime_end,
-                                    description: this.description,
-                                    who_signed: this.user.first_name + ' ' + this.user.last_name,
-                                    status: 1,
-                                    tel: this.tel,
-                                    type_of_leave: this.type_of_leave,
-                                    user: this.user.id
-                                })
-                                .then((res) => {
+                    if (this.datetime_start < this.datetime_end){
+                        swal.fire({
+                            title: 'Are you sure?',
+                            text: 'You will send this leave request',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes',
+                            cancelButtonText: 'No'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const today = moment(this.server_date)
+                                const start = moment(this.datetime_start)
+                                const end = moment(this.datetime_end)
+                                if (end.diff(today, 'days') < 15) {
                                     swal.fire({
-                                        title: 'Success',
-                                        text: 'Leave Request Sent',
-                                        icon: 'success',
+                                        title: 'Error',
+                                        text: 'DateTime must be greater than 15 days from today',
+                                        icon: 'error',
                                         confirmButtonText: 'OK'
                                     })
-                                })
+                                } else if (start.diff(today, 'days') < 15) {
+                                    swal.fire({
+                                        title: 'Error',
+                                        text: 'DateTime must be greater than 15 days from today',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    })
+                                } else {
+                                    axios.post(`${host}leave_requests/`, {
+                                        datetime_start: this.datetime_start,
+                                        datetime_end: this.datetime_end,
+                                        description: this.description,
+                                        who_signed: this.user.first_name + ' ' + this.user.last_name,
+                                        status: 1,
+                                        tel: this.tel,
+                                        type_of_leave: this.type_of_leave,
+                                        user: this.user.id
+                                    })
+                                    .then((res) => {
+                                        swal.fire({
+                                            title: 'Success',
+                                            text: 'Leave Request Sent',
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        })
+                                    })
+                                }
                             }
-                        }
-                    })
-                
+                        })
+                    } else {
+                        swal.fire({
+                            title: 'Error',
+                            text: 'DateTime Start must be less than DateTime End',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        })
+                    }
                     } catch (error) {
                         console.error(error);
                     }
