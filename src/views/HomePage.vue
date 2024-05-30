@@ -135,10 +135,10 @@
                                               <div class="modal-box">
                                                 <h3 class="font-bold text-lg text-white">Edit Description</h3>
                                                 <br>
-                                                <textarea type="text" class="input input-bordered w-[320px] max-w-xs h-[180px] resize-none cursor-not-allowed" :value="ts.description" readonly>
+                                                <textarea type="text" class="input input-bordered w-[320px] max-w-xs h-[180px] text-base resize-none cursor-not-allowed" :value="ts.description" readonly>
                                                 </textarea>
                                                 <p class="py-4 text-white">Change to</p>
-                                                <textarea maxlength="255" type="text" class="input input-bordered w-[320px] max-w-xs h-[180px] resize-none mb-4" v-model="today_des" required>
+                                                <textarea maxlength="255" type="text" class="input input-bordered w-[320px] text-base max-w-xs h-[180px] resize-none mb-4" v-model="today_des" required>
                                                 </textarea>
                                                 <div class="modal-action flex justify-around">
                                                   <form method="dialog">
