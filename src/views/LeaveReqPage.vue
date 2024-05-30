@@ -291,7 +291,7 @@
                         confirmButtonText: 'OK'
                     })
                 } else {
-                if (this.datetime_start > this.datetime_end){
+                if (this.datetime_start < this.datetime_end){
                     swal.fire({
                         title: 'Are you sure?',
                         text: 'You will update this leave request',
@@ -352,7 +352,7 @@
             },
             post_leaverequest(){
                 try {
-                    if (this.datetime_start > this.datetime_end){
+                    if (this.datetime_start < this.datetime_end){
                         swal.fire({
                             title: 'Are you sure?',
                             text: 'You will send this leave request',
