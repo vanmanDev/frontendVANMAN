@@ -358,7 +358,7 @@ import moment from 'moment'
                                 if (result.isConfirmed) {
                                     axios.post(host+ 'timesheets/',{
                                         date: this.date,
-                                        time_in: '00:00:00',
+                                        time_in: this.server_time,
                                         time_out: '00:00:00',
                                         type_of_work: this.type_of_work,
                                         description: this.text,
@@ -394,7 +394,7 @@ import moment from 'moment'
                                 if (result.isConfirmed) {
                                     axios.post(host+ 'timesheets/',{
                                         date: this.date,
-                                        time_in: '00:00:00',
+                                        time_in: this.server_time,
                                         time_out: '00:00:00',
                                         type_of_work: this.type_of_work,
                                         description: this.text,
@@ -456,7 +456,7 @@ import moment from 'moment'
                                         }).then(async () => {
                                             await swal.fire({
                                                 title: 'Warning',
-                                                text: 'Please sign In & Out for Work at bottom table.',
+                                                text: "Please don't forget to sign out for work at the bottom of the table.",
                                                 icon: 'warning',
                                                 confirmButtonColor: '#3085d6',
                                                 confirmButtonText: 'OK, I understand'
