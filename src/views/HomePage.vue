@@ -12,7 +12,7 @@
                             Time Attendance On {{ formatDate(server_date)  }} at {{ format_time(server_time) }}
                         </div>
                     </div>
-                    <div id="titlebox" class="py-[32px] text-black font-bold text-[30px] w-[100%] text-center">Sign In, <br>{{user.first_name}} {{user.last_name}}</div>
+                    <div id="titlebox" class="py-[32px] text-black font-bold text-[30px] w-[100%] text-center">Sign for work <br>{{user.first_name}} {{user.last_name}}</div>
                     <div id="form" class="w-full mt-10">
                         <form action="" class="px-[40px] flex justify-evenly flex-wrap">
                             <label class="form-control w-full max-w-xs">
@@ -135,10 +135,10 @@
                                               <div class="modal-box">
                                                 <h3 class="font-bold text-lg text-white">Edit Description</h3>
                                                 <br>
-                                                <textarea type="text" class="input input-bordered w-[320px] max-w-xs h-[180px] text-base resize-none cursor-not-allowed" :value="ts.description" readonly>
+                                                <textarea type="text" class="input input-bordered w-[320px] max-w-xs h-[180px] resize-none cursor-not-allowed" :value="ts.description" readonly>
                                                 </textarea>
                                                 <p class="py-4 text-white">Change to</p>
-                                                <textarea maxlength="255" type="text" class="input input-bordered w-[320px] text-base max-w-xs h-[180px] resize-none mb-4" v-model="today_des" required>
+                                                <textarea maxlength="255" type="text" class="input input-bordered w-[320px] max-w-xs h-[180px] resize-none mb-4" v-model="today_des" required>
                                                 </textarea>
                                                 <div class="modal-action flex justify-around">
                                                   <form method="dialog">
@@ -456,7 +456,7 @@ import moment from 'moment'
                                         }).then(async () => {
                                             await swal.fire({
                                                 title: 'Warning',
-                                                text: "Please don't forget to sign out for work at the bottom of the table.",
+                                                text: 'Please sign In & Out for Work at bottom table.',
                                                 icon: 'warning',
                                                 confirmButtonColor: '#3085d6',
                                                 confirmButtonText: 'OK, I understand'
