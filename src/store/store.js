@@ -2,7 +2,7 @@ import Vuex from 'vuex';
 
 const store = new Vuex.Store({
     state: {
-        host:'https://backendvanman-production.up.railway.app/'
+        host:'https://back-end-production-d6d6.up.railway.app/'
     },
     mutations: {
     },
